@@ -29,6 +29,7 @@ import Scrollbar from '../../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 
 import adminApi from '../../api/adminApi'
+import ConfirmDelete from './ConfirmDelete';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
@@ -50,6 +51,8 @@ export default function TableUserList() {
 
     const [selected, setSelected] = useState([]);
 
+    const [selectedForDelete, setSelectedForDelete] = useState([]);
+
     const [orderBy, setOrderBy] = useState('name');
 
     const [filterName, setFilterName] = useState('');
@@ -62,8 +65,9 @@ export default function TableUserList() {
         setOpen(null);
     };
 
-    const handleOpenMenu = (event) => {
+    const handleOpenMenu = (event, id) => {
         setOpen(event.currentTarget);
+        setSelectedForDelete(id)
     };
 
     const handleRequestSort = (event, property) => {
@@ -123,109 +127,117 @@ export default function TableUserList() {
         getUserList()
     }, [])
 
+    // DELETE
+    const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+
+
+    const handleDeleteUser = () => {
+        setOpenConfirmDelete(true)
+    }
+
     return (
         <>
             <Card>
-            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
-            <Scrollbar>
-                <TableContainer sx={{ minWidth: 800 }}>
-                <Table>
-                    <UserListHead
-                        order={order}
-                        orderBy={orderBy}
-                        headLabel={TABLE_HEAD}
-                        rowCount={filteredUsers.length}
-                        numSelected={selected.length}
-                        onRequestSort={handleRequestSort}
-                        onSelectAllClick={handleSelectAllClick}
-                    />
-                    <TableBody>
+                <Scrollbar>
+                    <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                        <UserListHead
+                            order={order}
+                            orderBy={orderBy}
+                            headLabel={TABLE_HEAD}
+                            rowCount={filteredUsers.length}
+                            numSelected={selected.length}
+                            onRequestSort={handleRequestSort}
+                            onSelectAllClick={handleSelectAllClick}
+                        />
+                        <TableBody>
+                            {
+                                filteredUsers.map((row) => {
+
+                                    const selectedUser = selected.indexOf(row.id) !== -1;
+
+                                    return (
+                                        <TableRow hover key={row.id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                            <TableCell padding="checkbox">
+                                                <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, row.id)} />
+                                            </TableCell>
+
+                                            <TableCell component="th" scope="row" padding="none">
+                                                <Stack direction="row" alignItems="center" spacing={2}>
+                                                    {/* <Avatar alt={row.fullName} src={avatarUrl} /> */}
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {row.fullName}
+                                                    </Typography>
+                                                </Stack>
+                                            </TableCell>
+
+                                            <TableCell align="left">{row.email}</TableCell>
+
+                                            <TableCell align="left">{row.username}</TableCell>
+
+                                            <TableCell align="left">
+                                                <Label color={(row.role_id === 2 && 'error') || 'success'}>{role[row.role_id-1]}</Label>
+                                            </TableCell>
+
+                                            <TableCell align="right">
+                                                <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row.id)}>
+                                                    <Iconify icon={'eva:more-vertical-fill'} />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            }
+
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 53 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+
                         {
-                            filteredUsers.map((row) => {
-
-                                const selectedUser = selected.indexOf(row.id) !== -1;
-
-                                return (
-                                    <TableRow hover key={row.id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, row.id)} />
-                                        </TableCell>
-
-                                        <TableCell component="th" scope="row" padding="none">
-                                            <Stack direction="row" alignItems="center" spacing={2}>
-                                                {/* <Avatar alt={row.fullName} src={avatarUrl} /> */}
-                                                <Typography variant="subtitle2" noWrap>
-                                                    {row.fullName}
+                            isNotFound 
+                            && 
+                            (
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                            <Paper
+                                                sx={{
+                                                    textAlign: 'center',
+                                                }}
+                                                >
+                                                <Typography variant="h6" paragraph>
+                                                    Not found
                                                 </Typography>
-                                            </Stack>
-                                        </TableCell>
 
-                                        <TableCell align="left">{row.email}</TableCell>
-
-                                        <TableCell align="left">{row.username}</TableCell>
-
-                                        <TableCell align="left">
-                                            <Label color={(row.role_id === 2 && 'error') || 'success'}>{role[row.role_id-1]}</Label>
-                                        </TableCell>
-
-                                        <TableCell align="right">
-                                            <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                <Iconify icon={'eva:more-vertical-fill'} />
-                                            </IconButton>
+                                                <Typography variant="body2">
+                                                    No results found for &nbsp;
+                                                    <strong>&quot;{filterName}&quot;</strong>.
+                                                    <br /> Try checking for typos or using complete words.
+                                                </Typography>
+                                            </Paper>
                                         </TableCell>
                                     </TableRow>
-                                );
-                            })
+                                </TableBody>
+                            )
                         }
+                    </Table>
+                    </TableContainer>
+                </Scrollbar>
 
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-
-                    {
-                        isNotFound 
-                        && 
-                        (
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                        <Paper
-                                            sx={{
-                                                textAlign: 'center',
-                                            }}
-                                            >
-                                            <Typography variant="h6" paragraph>
-                                                Not found
-                                            </Typography>
-
-                                            <Typography variant="body2">
-                                                No results found for &nbsp;
-                                                <strong>&quot;{filterName}&quot;</strong>.
-                                                <br /> Try checking for typos or using complete words.
-                                            </Typography>
-                                        </Paper>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        )
-                    }
-                </Table>
-                </TableContainer>
-            </Scrollbar>
-
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={filteredUsers.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={filteredUsers.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </Card>
 
             <Popover
@@ -251,11 +263,19 @@ export default function TableUserList() {
                     Edit
                 </MenuItem>
 
-                <MenuItem sx={{ color: 'error.main' }}>
+                <MenuItem sx={{ color: 'error.main' }} onClick={handleDeleteUser}>
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
                     Delete
                 </MenuItem>
             </Popover>
+            
+            <ConfirmDelete 
+                open={openConfirmDelete}
+                setOpen={setOpenConfirmDelete}
+                setOpenPopOver={setOpen}
+                id={selectedForDelete}
+                updateUserList={getUserList}
+            />
         </>
     )
 }
