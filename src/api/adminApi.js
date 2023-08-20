@@ -26,8 +26,17 @@ const adminApi = {
             url,
             {...data}
         )
-    }
+    },
     
+
+    editUser: (data) => {
+        const url = '/admin/edit'
+
+        return axiosClient.post(
+            url,
+            {...data}
+        )
+    },
 }
 
 export default adminApi;

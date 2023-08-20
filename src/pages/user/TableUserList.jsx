@@ -42,7 +42,7 @@ const TABLE_HEAD = [
 const role = ['Admin', 'Teacher']
 
 
-export default function TableUserList({ filteredUsers, getUserList }) {
+export default function TableUserList({ filteredUsers, getUserList, setOpenEditForm }) {
     const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
@@ -123,7 +123,16 @@ export default function TableUserList({ filteredUsers, getUserList }) {
 
 
     const handleDeleteUser = () => {
+        setOpen(false)
         setOpenConfirmDelete(true)
+    }
+
+    const handleEditUser = () => {
+        setOpen(false)
+        setOpenEditForm({
+            state: true,
+            id: selectedForDelete
+        })
     }
 
     return (
@@ -249,8 +258,8 @@ export default function TableUserList({ filteredUsers, getUserList }) {
                 },
                 }}
             >
-                <MenuItem>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                <MenuItem onClick={handleEditUser}>
+                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }}/>
                     Edit
                 </MenuItem>
 

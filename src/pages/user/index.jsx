@@ -16,7 +16,10 @@ import UserCreateForm from './UserCreateForm';
 
 export default function UserPage() {
 
-  const [openEditForm, setOpenEditForm] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState({
+    state: false,
+    id: ''
+  });
   const [openCreateForm, setOpenCreateForm] = useState(false);
 
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -28,6 +31,7 @@ export default function UserPage() {
   useEffect(() => {
       getUserList()
   }, [])
+
 
   return (
     <>
@@ -48,11 +52,14 @@ export default function UserPage() {
         <TableUserList 
           filteredUsers={filteredUsers}
           getUserList={getUserList}
+          setOpenEditForm={setOpenEditForm}
         />
 
         <UserEditForm 
           open={openEditForm} 
           setOpen={setOpenEditForm} 
+          data={filteredUsers}
+          updateUserList={getUserList}
         />
 
         <UserCreateForm

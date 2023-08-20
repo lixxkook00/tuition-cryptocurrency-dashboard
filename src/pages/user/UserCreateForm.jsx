@@ -6,6 +6,14 @@ import adminApi from '../../api/adminApi'
 export default function UserCreateForm({ open, setOpen, updateUserList }) {
 
   const { enqueueSnackbar } = useSnackbar();
+  const [validationError, setValidationError] = useState({
+    position: '',
+    content: ''
+  })
+
+  const isError = (name) => {
+    return validationError.position === name
+  }
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -28,15 +36,20 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
   };
 
   const handleSubmit = async () => {
-    const isSuccess = await adminApi.createUser(formData)
+    const response = await adminApi.createUser(formData)
 
-    if(isSuccess) {
+    if(response.status) {
       enqueueSnackbar('User was created successfull', { variant: 'success' });
       updateUserList()
-    }
+      handleClose();
+    }else{
+      console.log("failed", response)
 
-    // Close the modal
-    handleClose();
+      setValidationError({
+        position: response.position,
+        content: response.msg
+      })
+    }
   };
 
   return (
@@ -45,9 +58,11 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
         <DialogTitle textAlign={'center'}>Create New User</DialogTitle>
         <DialogContent>
           <TextField
-            label="Full Name"
-            name="fullName"
-            value={formData.fullName}
+            label="Username"
+            name="username"
+            error={!!(isError('username'))}
+            helperText={isError('username') && validationError.content}
+            value={formData.username}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -56,6 +71,8 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
           <TextField
             label="Email"
             name="email"
+            error={!!(isError('email'))}
+            helperText={isError('email') && validationError.content}
             value={formData.email}
             onChange={handleChange}
             fullWidth
@@ -63,9 +80,11 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
           />
 
           <TextField
-            label="Username"
-            name="username"
-            value={formData.username}
+            label="Full Name"
+            name="fullName"
+            error={!!(isError('fullName'))}
+            helperText={isError('fullName') && validationError.content}
+            value={formData.fullName}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -74,6 +93,8 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
           <TextField
             label="Password"
             name="password"
+            error={!!(isError('password'))}
+            helperText={isError('password') && validationError.content}
             type="password"
             value={formData.password}
             onChange={handleChange}
@@ -84,6 +105,8 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
           <TextField
             label="Repeat Password"
             name="rePassword"
+            error={!!(isError('rePassword'))}
+            helperText={isError('rePassword') && validationError.content}
             type="password"
             value={formData.rePassword}
             onChange={handleChange}
@@ -92,7 +115,7 @@ export default function UserCreateForm({ open, setOpen, updateUserList }) {
           />
 
           <FormControl sx={{ minWidth: 120 }} fullWidth>
-            <InputLabel id="demo-simple-select-standard-label">Age</InputLabel>
+            <InputLabel id="demo-simple-select-standard-label">Role</InputLabel>
             <Select
               label="Role"
               name="roleId"
