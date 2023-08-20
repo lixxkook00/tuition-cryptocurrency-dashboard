@@ -42,7 +42,7 @@ const TABLE_HEAD = [
 const role = ['Admin', 'Teacher']
 
 
-export default function TableUserList() {
+export default function TableUserList({ filteredUsers, getUserList }) {
     const [open, setOpen] = useState(null);
 
     const [page, setPage] = useState(0);
@@ -59,7 +59,7 @@ export default function TableUserList() {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const [filteredUsers, setFilteredUsers] = useState([]);
+    
 
     const handleCloseMenu = () => {
         setOpen(null);
@@ -117,15 +117,6 @@ export default function TableUserList() {
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredUsers.length) : 0;
 
     const isNotFound = !filteredUsers.length && !!filterName;
-
-    const getUserList = async () => {
-        const getUserList = await adminApi.getUserManagerList()
-        await setFilteredUsers(getUserList.data.data)
-    }
-
-    useEffect(() => {
-        getUserList()
-    }, [])
 
     // DELETE
     const [openConfirmDelete, setOpenConfirmDelete] = useState(false);

@@ -17,6 +17,15 @@ const adminApi = {
                 id: userId
             }
         )
+    },
+
+    createUser: (data) => {
+        const url = '/admin/create'
+
+        return axiosClient.post(
+            url,
+            {...data}
+        )
     }
     
 }
