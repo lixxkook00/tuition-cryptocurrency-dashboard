@@ -27,11 +27,34 @@ const adminApi = {
             {...data}
         )
     },
-    
 
     editUser: (data) => {
         const url = '/admin/edit'
 
+        return axiosClient.post(
+            url,
+            {...data}
+        )
+    },
+
+    getAdminWalletList: () => {
+        const url = 'admin/wallet-list'
+
+        return axiosClient.get(url)
+    },
+
+    deleteAdminWallet: (ownerRoleId, addressId) => {
+        const url = 'admin/wallet-delete'
+
+        return axiosClient.post(
+            url,
+            { ownerRoleId, addressId }
+        )
+    },
+
+    createAdminWallet: (data) => {
+        const url = 'admin/wallet-create'
+        console.log("data", data)
         return axiosClient.post(
             url,
             {...data}

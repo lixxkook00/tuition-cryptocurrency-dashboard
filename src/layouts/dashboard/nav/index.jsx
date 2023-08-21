@@ -12,10 +12,8 @@ import useResponsive from '../../../hooks/useResponsive';
 import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
-//
-import navConfig from './config';
 
-// ----------------------------------------------------------------------
+import navConfig from './config';
 
 const NAV_WIDTH = 280;
 
