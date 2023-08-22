@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { Card, Typography, CardHeader, CardContent } from '@mui/material';
 import { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineSeparator, TimelineConnector } from '@mui/lab';
 // utils
-import { fDateTime } from '../../../utils/formatTime';
-
-// ----------------------------------------------------------------------
+import { fDateTime, fTimeTZ } from '../../utils/formatTime';
 
 AppOrderTimeline.propTypes = {
   title: PropTypes.string,
@@ -13,10 +11,10 @@ AppOrderTimeline.propTypes = {
   list: PropTypes.array.isRequired,
 };
 
-export default function AppOrderTimeline({ title, subheader, list, ...other }) {
+export default function AppOrderTimeline({ title, data, ...other }) {
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} />
+      <CardHeader title={title} />
 
       <CardContent
         sx={{
@@ -26,48 +24,42 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
         }}
       >
         <Timeline>
-          {list.map((item, index) => (
+          {
+            data?.map((item, index) => (
+              <OrderItem key={item.SemesterID} item={item} isLast={index === data.length - 1} />
+            ))
+          }
+          {/* {list.map((item, index) => (
             <OrderItem key={item.id} item={item} isLast={index === list.length - 1} />
-          ))}
+          ))} */}
         </Timeline>
       </CardContent>
     </Card>
   );
 }
 
-// ----------------------------------------------------------------------
-
-OrderItem.propTypes = {
-  isLast: PropTypes.bool,
-  item: PropTypes.shape({
-    time: PropTypes.instanceOf(Date),
-    title: PropTypes.string,
-    type: PropTypes.string,
-  }),
-};
-
 function OrderItem({ item, isLast }) {
-  const { type, title, time } = item;
+  const { type, SemesterName } = item;
   return (
     <TimelineItem>
       <TimelineSeparator>
         <TimelineDot
           color={
-            (type === 'order1' && 'primary') ||
-            (type === 'order2' && 'success') ||
-            (type === 'order3' && 'info') ||
-            (type === 'order4' && 'warning') ||
-            'error'
+            // (type === 'order1' && 'primary') ||
+            // (type === 'order2' && 'success') ||
+            // (type === 'order3' && 'info') ||
+            // (type === 'order4' && 'warning') ||
+            (isLast && 'primary') || 'error'
           }
         />
         {isLast ? null : <TimelineConnector />}
       </TimelineSeparator>
 
       <TimelineContent>
-        <Typography variant="subtitle2">{title}</Typography>
+        <Typography variant="subtitle2">{SemesterName}</Typography>
 
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {fDateTime(time)}
+          {fTimeTZ(item.due_day)}
         </Typography>
       </TimelineContent>
     </TimelineItem>

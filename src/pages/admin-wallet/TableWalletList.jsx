@@ -27,6 +27,7 @@ import Scrollbar from '../../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 
 import ConfirmDelete from './ConfirmDelete';
+import ConfirmActive from './ConfirmActive';
 
 
 const TABLE_HEAD = [
@@ -103,19 +104,23 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
     // DELETE
     const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-
     const handleDeleteWallet = () => {
         setOpen(false)
         setOpenConfirmDelete(true)
     }
 
+    
+    // ACTIVE
+    const [openActiveConfirm, setOpenActiveConfirm] = useState(false);
+    
     const handleEditUser = () => {
         setOpen(false)
-        setOpenEditForm({
+        setOpenActiveConfirm({
             state: true,
             id: selectedForDelete
         })
     }
+
 
     // Handle copy address to clipboard
     const [copiedStates, setCopiedStates] = useState({});
@@ -295,6 +300,14 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
                 setOpen={setOpenConfirmDelete}
                 setOpenPopOver={setOpen}
                 id={selectedForDelete}
+                updateUserList={getUserList}
+            />
+
+            <ConfirmActive 
+                open={openActiveConfirm}
+                setOpen={setOpenActiveConfirm}
+                setOpenPopOver={setOpen}
+                idActived={selectedForDelete}
                 updateUserList={getUserList}
             />
         </>

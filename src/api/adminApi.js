@@ -54,11 +54,37 @@ const adminApi = {
 
     createAdminWallet: (data) => {
         const url = 'admin/wallet-create'
-        console.log("data", data)
+
         return axiosClient.post(
             url,
             {...data}
         )
+    },
+
+    activeAdminWallet: (data) => {
+        const url = 'admin/wallet-active'
+        
+        return axiosClient.post(
+            url,
+            {...data}
+        )
+    },
+
+    tuitionAnalytics: (semesterID) => {
+        const url = 'admin/tuition-analytics'
+        
+        return axiosClient.post(
+            url,
+            {
+                semesterId: semesterID
+            }
+        )
+    },
+
+    getSemester: () => {
+        const url = 'tuition/semester-list'
+        
+        return axiosClient.get(url)
     },
 }
 
