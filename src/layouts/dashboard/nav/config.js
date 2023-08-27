@@ -2,7 +2,7 @@ import SvgColor from '../../../components/svg-color';
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
-const navConfig = [
+export const navConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
@@ -40,4 +40,12 @@ const navConfig = [
   },
 ];
 
-export default navConfig;
+export const navConfigStudent = [
+  {
+    title: 'tuition',
+    path: '/dashboard/tuition',
+    icon: icon('ic_tuition'),
+  },
+]
+
+// export { navConfig, navConfigStudent};

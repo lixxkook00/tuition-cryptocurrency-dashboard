@@ -142,90 +142,90 @@ export default function TableUserList({ filteredUsers, getUserList, setOpenEditF
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
-                    <Table>
-                        <UserListHead
-                            order={order}
-                            orderBy={orderBy}
-                            headLabel={TABLE_HEAD}
-                            rowCount={filteredUsers.length}
-                            numSelected={selected.length}
-                            onRequestSort={handleRequestSort}
-                            onSelectAllClick={handleSelectAllClick}
-                        />
-                        <TableBody>
+                        <Table>
+                            <UserListHead
+                                order={order}
+                                orderBy={orderBy}
+                                headLabel={TABLE_HEAD}
+                                rowCount={filteredUsers.length}
+                                numSelected={selected.length}
+                                onRequestSort={handleRequestSort}
+                                onSelectAllClick={handleSelectAllClick}
+                            />
+                            <TableBody>
+                                {
+                                    filteredUsers.map((row) => {
+
+                                        const selectedUser = selected.indexOf(row.id) !== -1;
+
+                                        return (
+                                            <TableRow hover key={row.id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, row.id)} />
+                                                </TableCell>
+
+                                                <TableCell component="th" scope="row" padding="none">
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        {/* <Avatar alt={row.fullName} src={avatarUrl} /> */}
+                                                        <Typography variant="subtitle2" noWrap>
+                                                            {row.fullName}
+                                                        </Typography>
+                                                    </Stack>
+                                                </TableCell>
+
+                                                <TableCell align="left">{row.email}</TableCell>
+
+                                                <TableCell align="left">{row.username}</TableCell>
+
+                                                <TableCell align="left">
+                                                    <Label color={(row.role_id === 2 && 'error') || 'success'}>{role[row.role_id-1]}</Label>
+                                                </TableCell>
+
+                                                <TableCell align="right">
+                                                    <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row.id)}>
+                                                        <Iconify icon={'eva:more-vertical-fill'} />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })
+                                }
+
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 53 * emptyRows }}>
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+
                             {
-                                filteredUsers.map((row) => {
-
-                                    const selectedUser = selected.indexOf(row.id) !== -1;
-
-                                    return (
-                                        <TableRow hover key={row.id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                            <TableCell padding="checkbox">
-                                                <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, row.id)} />
-                                            </TableCell>
-
-                                            <TableCell component="th" scope="row" padding="none">
-                                                <Stack direction="row" alignItems="center" spacing={2}>
-                                                    {/* <Avatar alt={row.fullName} src={avatarUrl} /> */}
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {row.fullName}
+                                isNotFound 
+                                && 
+                                (
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                                <Paper
+                                                    sx={{
+                                                        textAlign: 'center',
+                                                    }}
+                                                    >
+                                                    <Typography variant="h6" paragraph>
+                                                        Not found
                                                     </Typography>
-                                                </Stack>
-                                            </TableCell>
 
-                                            <TableCell align="left">{row.email}</TableCell>
-
-                                            <TableCell align="left">{row.username}</TableCell>
-
-                                            <TableCell align="left">
-                                                <Label color={(row.role_id === 2 && 'error') || 'success'}>{role[row.role_id-1]}</Label>
-                                            </TableCell>
-
-                                            <TableCell align="right">
-                                                <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row.id)}>
-                                                    <Iconify icon={'eva:more-vertical-fill'} />
-                                                </IconButton>
+                                                    <Typography variant="body2">
+                                                        No results found for &nbsp;
+                                                        <strong>&quot;{filterName}&quot;</strong>.
+                                                        <br /> Try checking for typos or using complete words.
+                                                    </Typography>
+                                                </Paper>
                                             </TableCell>
                                         </TableRow>
-                                    );
-                                })
+                                    </TableBody>
+                                )
                             }
-
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-
-                        {
-                            isNotFound 
-                            && 
-                            (
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                            <Paper
-                                                sx={{
-                                                    textAlign: 'center',
-                                                }}
-                                                >
-                                                <Typography variant="h6" paragraph>
-                                                    Not found
-                                                </Typography>
-
-                                                <Typography variant="body2">
-                                                    No results found for &nbsp;
-                                                    <strong>&quot;{filterName}&quot;</strong>.
-                                                    <br /> Try checking for typos or using complete words.
-                                                </Typography>
-                                            </Paper>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            )
-                        }
-                    </Table>
+                        </Table>
                     </TableContainer>
                 </Scrollbar>
 

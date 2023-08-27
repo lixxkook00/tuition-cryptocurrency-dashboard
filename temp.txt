@@ -1,0 +1,153 @@
+import React, { useState, useEffect } from 'react';
+import Web3 from 'web3';
+// import { ethers } from 'ethers';
+
+import BigNumber from 'bignumber.js';
+
+const TOKEN = {
+    TOKEN_ABI: [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}],
+    TOKEN_ADDRESS: '0x77B8171117e27641320F49C1F668d0c3b81b4DF9',
+    DECIMAL: 18,
+}
+
+const SMART_CONTRACT = {
+    ABI : [{"inputs":[{"internalType":"address","name":"_receiverAddress","type":"address"},{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"student","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"string","name":"tuitionCode","type":"string"},{"indexed":false,"internalType":"string","name":"studentCode","type":"string"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"TuitionPaid","type":"event"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_newReceiver","type":"address"}],"name":"changeReceiver","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"string","name":"_tuitionCode","type":"string"},{"internalType":"string","name":"_studentCode","type":"string"}],"name":"depositTuition","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getTransactionHistory","outputs":[{"components":[{"internalType":"address","name":"student","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"tuitionCode","type":"string"},{"internalType":"string","name":"studentCode","type":"string"}],"internalType":"struct SchoolPaymentSystem.Transaction[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"receiverAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"showBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"studentBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tokenAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"transactions","outputs":[{"internalType":"address","name":"student","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"},{"internalType":"string","name":"tuitionCode","type":"string"},{"internalType":"string","name":"studentCode","type":"string"}],"stateMutability":"view","type":"function"}],
+    ADDRESS : '0xdFADABcaaE05aB24e4e311184535e32Db221f08b',
+}
+
+
+const SchoolPaymentApp = () => {
+    const [web3, setWeb3] = useState(null);
+    const [contract, setContract] = useState(null);
+    const [account, setAccount] = useState(null);
+    const [tuitionCode, setTuitionCode] = useState(0);
+    const [studentCode, setStudentCode] = useState(0);
+    const [transactions, setTransactions] = useState([]);
+    const [totalPaid, setTotalPaid] = useState(0);
+    useEffect(() => {
+        if(window.ethereum){
+            try {
+                window.ethereum.request({ method: 'eth_requestAccounts' })
+                if (window.ethereum.selectedAddress) {
+                    // return window.ethereum.selectedAddress;
+                }
+            } catch (error) {
+                // return error
+            }
+        }else{
+            alert("install metamask extension!!")
+        }
+
+        // Kết nối đến Ethereum node
+        const initWeb3 = async () => {
+            if (window.ethereum) {
+                const web3Instance = new Web3(window.ethereum);
+                setWeb3(web3Instance);
+
+                try {
+                    await window.ethereum.enable();
+                    const accounts = await web3Instance.eth.getAccounts();
+                    setAccount(accounts[0]);
+                    console.log(accounts[0]);
+                    // Địa chỉ hợp đồng SchoolPaymentSystem
+                    const contractAddress = SMART_CONTRACT.ADDRESS
+                    const contractInstance = new web3Instance.eth.Contract(SMART_CONTRACT.ABI, contractAddress);
+                    setContract(contractInstance);
+                    console.log();
+                    approveToken()
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        };
+
+        initWeb3();
+    }, []);
+
+    const approveToken = async () => {
+        const web3 = new Web3(window.ethereum);
+
+        const accounts = await web3.eth.getAccounts();
+        // console.log(accounts)
+        if (!accounts.length) {
+            return
+        }
+
+        console.log("check", accounts)
+        
+        const tokenContract = new web3.eth.Contract(TOKEN.TOKEN_ABI, TOKEN.TOKEN_ADDRESS);
+
+        console.log(SMART_CONTRACT.ADDRESS, 1, tokenContract);
+        const data_ = await tokenContract.methods.approve(SMART_CONTRACT.ADDRESS, 1)
+            .send({ from: accounts[0] })
+            .catch((error) => {
+                console.error('Error:', error);
+                return false;
+            });
+        console.log(data_);
+        // return data_
+    };
+
+    const depositTuition = async (AMOUNT) => {
+        const web3 = new Web3(window.ethereum);
+
+            let accounts = await web3.eth.getAccounts();
+            // console.log(accounts)
+            if (!accounts.length) {
+                accounts = ["0x0000000000000010000000000000000000000001"];
+            }
+
+            const contract = new web3.eth.Contract(TOKEN.TOKEN_ABI, TOKEN.TOKEN_ADDRESS);
+
+            try {
+                const amount = web3.utils.toWei((AMOUNT *1).toString(), 'ether');
+                const tx = await contract.methods.depositTuition(amount, tuitionCode, studentCode).send({ from: accounts[0] });
+                console.log('Transaction:', tx);
+    
+                loadTransactionHistory();
+            } catch (error) {
+                console.error(error);
+            }
+
+
+    };
+
+    const loadTransactionHistory = async () => {
+        if (!contract || !account) return;
+
+        try {
+            const txHistory = await contract.methods.getTransactionHistory().call({ from: account });
+            setTransactions(txHistory);
+
+            const totalAmountPaid = txHistory.reduce((total, tx) => total + Number(tx.amount), 0);
+            setTotalPaid(totalAmountPaid);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return (
+        <div>
+            <h1>School Payment System</h1>
+            <div>
+                <input type="text" placeholder="Tuition Code" onChange={(e) => setTuitionCode(e.target.value)} />
+                <input type="text" placeholder="Student Code" onChange={(e) => setStudentCode(e.target.value)} />
+                <button onClick={() => depositTuition()}>Deposit Tuition</button>
+            </div>
+            <div>
+                <h2>Transaction History</h2>
+                <ul>
+                    {transactions?.map((tx, index) => (
+                        <li key={index}>
+                            Student: {tx.student}, Amount: {web3?.utils.fromWei(tx.amount, 'ether')} ETH,
+                            Tuition Code: {tx.tuitionCode}, Student Code: {tx.studentCode}
+                        </li>
+                    ))}
+                </ul>
+                <p>Total Paid: {web3?.utils.fromWei(totalPaid.toString(), 'ether')} ETH</p>
+            </div>
+        </div>
+    );
+};
+
+export default SchoolPaymentApp;

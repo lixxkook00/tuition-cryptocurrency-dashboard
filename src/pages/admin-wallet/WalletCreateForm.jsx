@@ -71,7 +71,7 @@ export default function WalletCreateForm({ open, setOpen, updateUserList }) {
           />
 
           <FormControl sx={{ minWidth: 120 }} fullWidth>
-            <InputLabel id="demo-simple-select-standard-label">Role</InputLabel>
+            <InputLabel id="demo-simple-select-standard-label">Network</InputLabel>
             <Select
               label="Network"
               name="networkId"
