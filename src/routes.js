@@ -1,8 +1,8 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-// layouts
+import { useDispatch } from 'react-redux';
+
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-
 
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/user';
@@ -13,12 +13,21 @@ import DashboardAppPage from './pages/dash-board';
 import AdminWallet from './pages/admin-wallet';
 import Tuition from './pages/tuition';
 
-const checkAuthentication = () => {
-  return JSON.parse(localStorage.getItem('user'));
+import { setUserInfor } from './actions';
+
+const checkAuthentication = (dispatch) => {
+  if(JSON.parse(localStorage.getItem('user')) !== null){
+
+    dispatch(setUserInfor(JSON.parse(localStorage.getItem('user'))))
+
+    return true;
+  }
+
+  return false;
 }
 
-const AuthenticatedRoute = ({ element, redirectTo, path }) => {
-  const isAuthenticated = checkAuthentication(); 
+const AuthenticatedRoute = ({ element, redirectTo, path , dispatch}) => {
+  const isAuthenticated = checkAuthentication(dispatch); 
 
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
@@ -29,6 +38,8 @@ const AuthenticatedRoute = ({ element, redirectTo, path }) => {
 
 export default function Router() {
 
+  const dispatch = useDispatch();
+
   const routes = useRoutes([
     {
       path: '/dashboard',
@@ -36,6 +47,7 @@ export default function Router() {
         <AuthenticatedRoute
           redirectTo="/login"
           element={<DashboardLayout />}
+          dispatch={dispatch}
         />
       ,
       children: [

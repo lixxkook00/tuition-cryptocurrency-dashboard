@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export function handleLoginWithGoogle (user, navigate) {
+export function handleLoginWithGoogle (user, navigate, onSuccess) {
     axios
         .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
             headers: {
@@ -22,6 +22,8 @@ export function handleLoginWithGoogle (user, navigate) {
                 avt: res.data.picture,
             }
             localStorage.setItem('user', JSON.stringify(data));
+
+            onSuccess(data)
 
             navigate('/dashboard/tuition')
             
