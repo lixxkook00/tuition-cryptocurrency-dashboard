@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -36,6 +36,16 @@ export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
   
   const account = useSelector(state => state.user)
+
+  const [dataNav, setDataNav] = useState(navConfigStudent)
+
+  useEffect(() => {
+    if(JSON.parse(localStorage.getItem('user')).type === 'student'){
+      setDataNav(navConfigStudent)  
+    }else{
+      setDataNav(navConfig)
+    }
+  }, [])
 
   const isDesktop = useResponsive('up', 'lg');
 
@@ -78,7 +88,7 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-      <NavSection data={navConfigStudent} />
+      <NavSection data={dataNav} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

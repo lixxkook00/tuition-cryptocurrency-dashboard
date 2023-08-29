@@ -1,17 +1,21 @@
-import { Card, Container, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
+import { Button, Card, Container, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import truncateEthAddress from 'truncate-eth-address'
 
 import { Helmet } from 'react-helmet-async'
+
 import TuitionMainTable from './TuitionMainTable'
 import studentApi from '../../api/studentApi'
 import tuitionApi from '../../api/tuitionApi'
 import SchoolPaymentApp from './SchoolPaymentApp'
+import { connectWallet } from '../../interactions/connectWallet'
 
 export default function Tuition() {
-
     const [tuition, setTuition] = useState(null)
     const [semesterTypes, setSemesterTypes] = useState(null)
     const [semesterIdActived, setSemesterIdActived] = useState('')
+    
+    const [address, setAddress] = useState("")
 
     const updateTuition = async () => {
         const result = await studentApi.getTuiTion(51800423)
@@ -40,6 +44,35 @@ export default function Tuition() {
         getSemesterTypes();
     }, [])
 
+    // handle connect wallet
+    const handleConnectWallet = async () => {
+        const result = await connectWallet();
+
+        setAddress(result)
+    }
+
+    // handle changed wallet
+    useEffect(() => {
+        if (window.ethereum){
+            handleConnectWallet()
+        }
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            setAddress(window.ethereum.selectedAddress);
+        }
+    },[])
+
+    // handle on-change wallet
+    useEffect(() => {
+        if (window.ethereum) {
+            window.ethereum.on("chainChanged", () => {
+                window.location.reload();
+            });
+            window.ethereum.on("accountsChanged", () => {
+                window.location.reload();
+            });
+        }
+    });
+
     return (
         <>
             <Helmet>
@@ -52,6 +85,10 @@ export default function Tuition() {
                     <Typography variant="h4">
                         Tuition
                     </Typography>
+
+                    <Button color={ address ? "success" : "primary" } variant="contained" onClick={() => handleConnectWallet()} >
+                        { address === "" ? "Connect Wallet" : `${truncateEthAddress(address)}`} 
+                    </Button>
                 </Stack>
 
                 <Card sx={{ marginBottom: '20px' , padding: '10px'}}>
@@ -80,7 +117,11 @@ export default function Tuition() {
                     />
                 }
 
-                <SchoolPaymentApp />
+                <SchoolPaymentApp 
+                    data={tuition}
+                    semesterID={semesterIdActived}
+                    semesterTypes={semesterTypes}
+                />
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} mt={4}>
                     <Typography variant="h4">

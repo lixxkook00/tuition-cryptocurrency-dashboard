@@ -1,6 +1,16 @@
 const { default: axiosClient } = require("./axiosClient")
 
 const adminApi = {
+
+    login: (data) => {
+        const url = '/admin/login'
+
+        return axiosClient.post(
+            url,
+            {...data}
+        )
+    },
+
     getUserManagerList: () => {
         const url = 'admin/user-list'
 

@@ -8,6 +8,15 @@ const tuitionApi = {
             url
         )
     },
+
+    confirmPaymentTuition: (data) => {
+        const url = '/student/confirm-payment'
+
+        return axiosClient.post(
+            url,
+            {...data}
+        )
+    },
 }
 
 export default tuitionApi;

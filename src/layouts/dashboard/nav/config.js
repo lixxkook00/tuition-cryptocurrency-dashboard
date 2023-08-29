@@ -46,6 +46,11 @@ export const navConfigStudent = [
     path: '/dashboard/tuition',
     icon: icon('ic_tuition'),
   },
+  {
+    title: 'History',
+    path: '/dashboard/student-history',
+    icon: icon('ic_tuition'),
+  },
 ]
 
 // export { navConfig, navConfigStudent};
