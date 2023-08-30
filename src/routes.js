@@ -15,6 +15,7 @@ import Tuition from './pages/tuition';
 
 import { setUserInfor } from './actions';
 import StudentHistory from './pages/student-history';
+import AdminHistory from './pages/admin-history';
 
 const checkAuthentication = (dispatch) => {
   if(JSON.parse(localStorage.getItem('user')) !== null){
@@ -60,6 +61,7 @@ export default function Router() {
         { path: 'admin-wallet', element: <AdminWallet /> },
         { path: 'tuition', element: <Tuition /> },
         { path: 'student-history', element: <StudentHistory /> },
+        { path: 'admin-history', element: <AdminHistory /> },
       ],
     },
     {

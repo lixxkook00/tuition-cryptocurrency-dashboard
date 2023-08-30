@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-
+import { useSnackbar } from 'notistack';
 import { Button, Stack } from '@mui/material'
 
 import { useDispatch } from 'react-redux';
@@ -13,7 +13,7 @@ import { activeLoading, removeLoading, setUserInfor } from '../../actions';
 
 export default function LoginWithGoogle() {
     const navigate = useNavigate();
-
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
 
     // LOGIN WITH GOOGLE
@@ -28,7 +28,7 @@ export default function LoginWithGoogle() {
                 codeResponse, 
                 navigate, 
                 (data) => {
-                    console.log("data", data)
+                    enqueueSnackbar('You are logged in successfully', { variant: 'success' });
                     dispatch(setUserInfor(data))
                     dispatch(removeLoading())
                 }

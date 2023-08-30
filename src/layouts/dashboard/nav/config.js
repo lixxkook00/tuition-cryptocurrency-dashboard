@@ -19,25 +19,30 @@ export const navConfig = [
     icon: icon('ic_wallet'),
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: icon('ic_cart'),
+    title: 'All Transaction',
+    path: '/dashboard/admin-history',
+    icon: icon('ic_tuition'),
   },
-  {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: icon('ic_blog'),
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'product',
+  //   path: '/dashboard/products',
+  //   icon: icon('ic_cart'),
+  // },
+  // {
+  //   title: 'blog',
+  //   path: '/dashboard/blog',
+  //   icon: icon('ic_blog'),
+  // },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export const navConfigStudent = [
@@ -47,8 +52,13 @@ export const navConfigStudent = [
     icon: icon('ic_tuition'),
   },
   {
-    title: 'History',
+    title: 'your transactions',
     path: '/dashboard/student-history',
+    icon: icon('ic_tuition'),
+  },
+  {
+    title: 'Instructions',
+    path: '/dashboard/instruction',
     icon: icon('ic_tuition'),
   },
 ]

@@ -1,41 +1,36 @@
-import { Card, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
+import Web3 from 'web3';
+import { Card, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 import Label from '../../components/label';
 
+import { getTransactionAll } from '../../interactions/tuitionContract';
+
 const tableConfig = [
     {
-        head : 'Previous Pending Charges',
-        decs : '(1)',
+        head : 'Wallet Address',
+        decs : '0x699...',
     },
     {
-        head : 'Semester Tuition',
-        decs : '(2)',
+        head : 'Amount',
+        decs : 'USDT',
     },
     {
-        head : 'Reduction',
-        decs : '(3)',
+        head : 'Tuition Code',
+        decs : '()',
     },
     {
-        head : 'Total Tuition Unpaid',
-        decs : '(4) = (1) + (2) - (3)',
+        head : 'Time',
+        decs : '()',
     },
     {
-        head : 'Total Tuition Paid',
-        decs : '(5)',
-    },
-    {
-        head : 'Remaining Unpaid Tuition',
-        decs : '(6) = (4) - (5)',
+        head : 'Student Code',
+        decs : '()',
     },
     {
         head : 'Status',
-        decs : '(7)',
-    },
-    {
-        head : '',
-        decs : '',
+        decs : '()',
     },
 ]
 
@@ -50,18 +45,17 @@ const style = {
     },
     valueStyle: 
     {
-        color: '#DE412E', 
+        color: '#0267AC', 
         fontWeight: 'bold',
     },
 }
 
-export default function TuitionMainTable({ data, semesterID }) {
-    const [tuitionData, setTuitionData] = useState('')
+export default function AdminHistory() {
+    const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
-        setTuitionData(data.find(obj => obj.SemesterID === semesterID))
-
-    }, [semesterID])
+        getTransactionAll(setTransactions);
+    }, [])
 
     return (
         <Card>
@@ -101,53 +95,50 @@ export default function TuitionMainTable({ data, semesterID }) {
                             </TableRow>
                         </TableHead>
                         {
-                            ( data !== '' )
+                            ( transactions.length > 0 )
                             ?
                             (
                                 <TableBody>
-                                    <TableRow hover role="checkbox">
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.PreviousPendingCharges?.toLocaleString('en-US') }
-                                        </TableCell>
+                                    {
+                                        transactions?.map((tx, index) => {
+                                            const date = new Date(Number.parseInt(`${tx?.timestamp.toString()}000`, 10)).toLocaleString('en-GB', {
+                                                day: 'numeric',
+                                                month: 'numeric',
+                                                year: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                second: 'numeric',
+                                            })
+                                            return (
+                                                <TableRow key={index} hover role="checkbox">
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                            { tx?.student}
+                                                    </TableCell>
 
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.SemesterTuition?.toLocaleString('en-US') }
-                                        </TableCell>
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                            { Web3.utils.fromWei(tx?.amount, 'ether')}
+                                                    </TableCell>
 
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.Reduction?.toLocaleString('en-US') }
-                                        </TableCell>
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                            { tx?.tuitionCode}
+                                                    </TableCell>
 
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.TotalTuitionUnpaid?.toLocaleString('en-US') }
-                                        </TableCell>
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.TotalTuitionPaid?.toLocaleString('en-US') }
-                                        </TableCell>
-                                        <TableCell align="center" style={style.valueStyle}>
-                                                { tuitionData?.RemainingUnpaidTuition?.toLocaleString('en-US') }
-                                        </TableCell>
-                                        {
-                                            tuitionData?.IsPaid !== undefined
-                                            ?
-                                                <TableCell align="center" style={style.valueStyle}>
-                                                    <Label color={ tuitionData !== '' && ((tuitionData?.IsPaid !== 1 ) && 'error') || 'success'}>
-                                                        { tuitionData !== '' && (tuitionData?.IsPaid === 1) ? "Paid" : "Unpaid"  }
-                                                    </Label>
-                                                </TableCell>
-                                            :
-                                                <TableCell align="center" style={style.valueStyle}>
-                                                    <Label />
-                                                </TableCell>
-                                        }
-                                        
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                            { date }
+                                                    </TableCell>
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                            { tx?.studentCode}
+                                                    </TableCell>
+                                                    <TableCell align="center" style={style.valueStyle}>
+                                                        <Label color={ 'success'}>
+                                                            Complete
+                                                        </Label>
+                                                    </TableCell>
+                                                </TableRow>
 
-                                        <TableCell align="right">
-                                            <IconButton size="large" color="inherit" >
-                                                <Iconify icon={'eva:more-vertical-fill'} />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
+                                            )
+                                        }) 
+                                    }
                                 </TableBody>
                             )
                             :

@@ -27,6 +27,7 @@ export default function ConfirmPayment({ open, setOpen, data, semesterID, semest
                 dispatch(removeLoading())
                 enqueueSnackbar('School payment made successfully!!!', { variant: 'success' });
                 navigate('/dashboard/student-history');
+                enqueueSnackbar('Please check your student email for payment detail', { variant: 'success' });
             },
             {
                 ...data,
