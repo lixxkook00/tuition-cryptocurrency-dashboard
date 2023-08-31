@@ -101,6 +101,7 @@ export default function StudentHistory() {
                                 <TableBody>
                                     {
                                         transactions?.map((tx, index) => {
+                                            // if(tx?.studentCode === JSON.parse(localStorage.getItem('user').)){
                                             const date = new Date(Number.parseInt(`${tx?.timestamp.toString()}000`, 10)).toLocaleString('en-GB', {
                                                 day: 'numeric',
                                                 month: 'numeric',
@@ -110,6 +111,7 @@ export default function StudentHistory() {
                                                 second: 'numeric',
                                             })
                                             return (
+                                                
                                                 <TableRow key={index} hover role="checkbox">
                                                     <TableCell align="center" style={style.valueStyle}>
                                                             { tx?.student}
@@ -135,7 +137,6 @@ export default function StudentHistory() {
                                                         </Label>
                                                     </TableCell>
                                                 </TableRow>
-
                                             )
                                         }) 
                                     }
