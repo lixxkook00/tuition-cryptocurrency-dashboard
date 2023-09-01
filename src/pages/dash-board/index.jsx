@@ -46,7 +46,7 @@ export default function DashboardAppPage() {
   }
 
   useEffect(() => {
-    updateData(1)
+    updateData(2)
     getSemesterList()
   }, [])
 

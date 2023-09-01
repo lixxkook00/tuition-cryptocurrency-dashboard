@@ -31,6 +31,10 @@ export default function LoginWithGoogle() {
                     enqueueSnackbar('You are logged in successfully', { variant: 'success' });
                     dispatch(setUserInfor(data))
                     dispatch(removeLoading())
+                },
+                () => {
+                    dispatch(removeLoading())
+                    enqueueSnackbar('Please use your student email to log in to the system', { variant: 'error' });
                 }
             )
         },

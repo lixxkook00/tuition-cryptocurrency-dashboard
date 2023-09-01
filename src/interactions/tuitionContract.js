@@ -4,6 +4,7 @@ import axios from 'axios';
 import SMART_CONTRACT from '../smartcontracts';
 import { approveToken } from './tokenContract';
 import tuitionApi from '../api/tuitionApi';
+import adminApi from '../api/adminApi';
 
 export const TDTUContract = async () => {
     try {
@@ -121,5 +122,40 @@ export const despoitTuition = async (amount, tuitionCode, studentCode, onComplet
         
     } catch (error) {
         console.error(error);
+    }
+}
+
+export const activeReceiverAddress  = async ( address, data, onComplete ) => {
+    try {
+        const web3 = new Web3(window.ethereum);
+
+        const contract = await TDTUContract();
+
+        console.log("address", address)
+
+        const data_ = await contract.methods.changeReceiver(
+            address
+        ).encodeABI();
+
+        const transactionParameters = {
+            to: SMART_CONTRACT.TDTU_TUITION.ADDRESS,
+            from: window.ethereum.selectedAddress,
+            data: data_,
+            chainId: 97,
+        };
+
+        const txHash = await window.ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+        });
+
+        console.log("activeReceiverAddress", txHash)
+
+        const isDeleted = await adminApi.activeAdminWallet(data)
+
+        await onComplete(isDeleted)
+    }
+    catch (error) {
+        console.log(error)
     }
 }

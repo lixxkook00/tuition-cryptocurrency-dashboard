@@ -50,6 +50,7 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
     const [selected, setSelected] = useState([]);
 
     const [selectedForDelete, setSelectedForDelete] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState([]);
 
     const [orderBy, setOrderBy] = useState('name');
 
@@ -63,9 +64,10 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
         setOpen(null);
     };
 
-    const handleOpenMenu = (event, id) => {
+    const handleOpenMenu = (event, id, address) => {
         setOpen(event.currentTarget);
-        setSelectedForDelete(id)
+        setSelectedForDelete(id);
+        setSelectedAddress(address);
     };
 
     const handleRequestSort = (event, property) => {
@@ -117,7 +119,8 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
         setOpen(false)
         setOpenActiveConfirm({
             state: true,
-            id: selectedForDelete
+            id: selectedForDelete,
+            // address: 
         })
     }
 
@@ -206,7 +209,7 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
                                                     </TableCell>
                                                 :
                                                     <TableCell align="right">
-                                                        <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row.id)}>
+                                                        <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row.id, row.address)}>
                                                             <Iconify icon={'eva:more-vertical-fill'} />
                                                         </IconButton>
                                                     </TableCell>
@@ -309,6 +312,7 @@ export default function TableWalletList({ filteredUsers, getUserList, setOpenEdi
                 setOpenPopOver={setOpen}
                 idActived={selectedForDelete}
                 updateUserList={getUserList}
+                address={selectedAddress}
             />
         </>
     )
